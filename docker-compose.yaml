@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  web:
+    container_name: web
+    build: 
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/home/workspace/
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+
+  redis:
+    container_name: redis
+    image: redis
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    container_name: db
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+
+volumes:
+  dbdata: {}
+networks:
+  appNetwork: {}
